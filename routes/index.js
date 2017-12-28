@@ -3,6 +3,7 @@ var passport = require('passport');
 var UserModel = require('../models/userModel');
 var flash = require('connect-flash');
 var router = express.Router();
+var bcrypt = require('bcrypt');
 
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated())
@@ -31,15 +32,21 @@ router.get('/register', function(req, res) {
 });
 
 router.post('/register', function(req, res) {
-  var user = new UserModel(req.body);
-  user.save( function(err) {
-    if (err) {
-      var message = getErrorMessage(err);
-      req.flash('error', message);
-      return res.redirect('/signup');
+  UserModel.findOne({ username: req.body.username }, function(err, user) {
+    if(user) {
+      res.json(null);
+      return;
+    } else {
+      var newUser = new UserModel(req.body);
+      newUser.save( function(err) {
+        if (err) {
+          req.flash('error', err);
+          return res.redirect('/signup');
+        }
+      });
+      return res.redirect('/login');
     }
-  });
-  res.redirect('/login');
+  })
 });
 
 router.get('/login', function(req, res) {
@@ -54,41 +61,13 @@ router.get('/login', function(req, res) {
 router.post('/login', 
   passport.authenticate('local', {  successRedirect: '/', 
                                     failureRedirect: '/login',
-                                    failureFlash: true })
+                                    failureFlash: 'Invalid username or password.',
+                                    successFlash: 'Welcome!' })
 );
 
 router.get('/logout', function(req, res) {
     req.logout();
     res.redirect('/');
 });
-
-
-// Create a new error handling controller method
-var getErrorMessage = function(err) {
-  // Define the error message variable
-  var message = '';
-
-  // If an internal MongoDB error occurs get the error message
-  if (err.code) {
-    switch (err.code) {
-      // If a unique index error occurs set the message error
-      case 11000:
-      case 11001:
-        message = 'Username already exists';
-        break;
-      // If a general error occurs set the message error
-      default:
-        message = 'Something went wrong';
-    }
-  } else {
-    // Grab the first error message from a list of possible errors
-    for (var errName in err.errors) {
-      if (err.errors[errName].message) message = err.errors[errName].message;
-    }
-  }
-
-  // Return the message error
-  return message;
-};
 
 module.exports = router;
