@@ -34,8 +34,7 @@ router.post('/register', function(req, res) {
   var user = new UserModel(req.body);
   user.save( function(err) {
     if (err) {
-      var message = getErrorMessage(err);
-      req.flash('error', message);
+      req.flash('error', err);
       return res.redirect('/signup');
     }
   });
@@ -62,33 +61,5 @@ router.get('/logout', function(req, res) {
     res.redirect('/');
 });
 
-
-// Create a new error handling controller method
-var getErrorMessage = function(err) {
-  // Define the error message variable
-  var message = '';
-
-  // If an internal MongoDB error occurs get the error message
-  if (err.code) {
-    switch (err.code) {
-      // If a unique index error occurs set the message error
-      case 11000:
-      case 11001:
-        message = 'Username already exists';
-        break;
-      // If a general error occurs set the message error
-      default:
-        message = 'Something went wrong';
-    }
-  } else {
-    // Grab the first error message from a list of possible errors
-    for (var errName in err.errors) {
-      if (err.errors[errName].message) message = err.errors[errName].message;
-    }
-  }
-
-  // Return the message error
-  return message;
-};
 
 module.exports = router;
