@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title><%= title %></title>
+
+	<link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+	<script src='http://code.jquery.com/jquery-3.1.4.min.js'></script>
+	<script src='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js'></script>
+</head>
+<body>
+	<div class="container">
+		<div class="jumbotron">
+			<p>사용자에 대한 정보를 보여준다.</p>
+			<!-- Display flash messages  -->
+			<% for(var i in messages) { %>
+			   <div class="flash"><%= messages[i] %></div>
+			<% } %>
+			
+			<!-- Render the OAuth authentication links  -->
+			<a href="/">Home</a>
+			<% if (user) { %>
+				<a href="/logout">Logout</a>
+			<% } else { %>
+				<a href="/login">Login</a>
+				<a href="/register">Register</a>
+		  <% } %>
+		</div>
+	</div>
+</body>
+</html>

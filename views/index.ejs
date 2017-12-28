@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title><%= title %></title>
+
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
+	<script src='http://code.jquery.com/jquery-3.2.1.min.js'></script>
+	<script src='http://netdna.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js'></script>
+</head>
+<body>
+	
+	<div class="container">
+		<div class="jumbotron">
+		<!-- Render the OAuth authentication links  -->
+		<% if (user) { %>
+			<p>Welcome! Please <%= user.username %></p>
+			<div>
+				Username: <%= user.username %><br/>
+				Firstname: <%= user.firstName %><br/>
+				Lastname: <%= user.lastName %><br/>
+				<% if (user.emails) { %>
+				Email: <%= user.email %><br/>
+				<% } %>
+			</div>
+
+		<%}%>
+
+			<div>
+		<% if (user) { %>
+			<a href="/logout">Logout</a>
+		<%} else { %>
+			<p>로그인해 주세요.</p>
+				<a href="/login">Login</a>
+		<%} %>
+				<a href="/register">Register</a>
+				<a href="/mypage">MyPage</a>
+
+			</div>
+		</div>
+	</div>
+</body>
+</html>
