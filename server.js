@@ -18,27 +18,25 @@ mongoose.dsn =  'mongodb://' + process.env.DB_USERNAME
       + ':27017/' + process.env.DATABASE;
 
 // passport config
-passport.use( new LocalStrategy( 
-  function(username, password, done) {
-    UserModel.findOne({
-          username: username.toLowerCase()
-        }, function(err, user) {
-         if (err) { return done(err); }
-         if (!user) { return done(null, false); }
-         if (!user.verifyPassword(password)) { return done(null, false); }
-         return done(null, user);
-      });
-  })//LocalStrategy
-);
+// use static authenticate method of model in LocalStrategy
+passport.use(new LocalStrategy( UserModel.authenticate()));
 
-// serialization user
-passport.serializeUser(function (user, done) {
-  done(null, user)
-});
-// deserialization user
-passport.deserializeUser(function (user, done) {
-  done(null, user);
-});
+// passport.use( new LocalStrategy( 
+//   function(username, password, done) {
+//     UserModel.findOne({
+//           username: username.toLowerCase()
+//         }, function(err, user) {
+//          if (err) { return done(err); }
+//          if (!user) { return done(null, false); }
+//          if (!user.verifyPassword(password)) { return done(null, false); }
+//          return done(null, user);
+//       });
+//   })//LocalStrategy
+// );
+
+// use static serialize and deserialize of model for passport session support
+passport.serializeUser(UserModel.serializeUser());
+passport.deserializeUser(UserModel.deserializeUser());
 
 
 var app = express();

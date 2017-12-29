@@ -30,15 +30,25 @@ router.get('/register', function(req, res) {
     });
 });
 
-router.post('/register', function(req, res) {
-  var user = new UserModel(req.body);
-  user.save( function(err) {
+router.post('/register', function(req, res, next) {
+
+  UserModel.register( new UserModel({username: req.body.username}), req.body.password, function(err) {
     if (err) {
+      console.log('error while user register!', err);
       req.flash('error', err);
-      return res.redirect('/signup');
+      return next(err);
     }
+    res.redirect('/login');
   });
-  res.redirect('/login');
+
+  // var user = new UserModel(req.body);
+  // user.save( function(err) {
+  //   if (err) {
+  //     req.flash('error', err);
+  //     return res.redirect('/signup');
+  //   }
+  // });
+  // res.redirect('/login');
 });
 
 router.get('/login', function(req, res) {
